@@ -49,11 +49,11 @@ class TGA{
 			
 			f.close();
 		}
-		bool setPixel(int x,int y,COLOR clr){
-			if(x<0||y<0){return false;}
+		void setPixel(int x,int y,COLOR clr){
+			if(x<0||y<0||x>=width||y>=height){return;}
+			
 			else{
 				data[(y * width) + x]=clr;
-				return true;
 			}
 		}
 		void loadFile();
