@@ -3,11 +3,9 @@
 
 #include <fstream>
 #include <string>
+#include "types.h"
 using namespace std;
 
-typedef struct{
-	unsigned char red,green,blue,alpha;
-}COLOR;
 
 class TGA{
 	private:

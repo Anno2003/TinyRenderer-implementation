@@ -4,16 +4,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "types.h"
 
 using namespace std;
-
-template<class t> struct vec3{
-	float x,y,z;
-};
-typedef vec3<float> vec3f;
-typedef vec3<int>   vec3i;
-
-struct triangle{vec3f p[3];};
 
 class Mesh{
 	private:
