@@ -43,37 +43,32 @@ void line(int x1,int y1,int x2,int y2,TGA &target,COLOR &clr){
 }
 
 void triangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
-	if(t0.y>t1.y){swap(t0,t1);};
-	if(t0.y>t2.y){swap(t0,t2);};
+	if(t0.y>t1.y){swap(t0,t1);};//sort based on y axis 
+	if(t0.y>t2.y){swap(t0,t2);};//so that t0 is always the smallest
 	if(t1.y>t2.y){swap(t1,t2);};
 	
-	line(t0.x,t0.y,t1.x,t1.y,target,black);
-	line(t1.x,t1.y,t2.x,t2.y,target,black);
-	line(t2.x,t2.y,t0.x,t0.y,target,blu);
+	line(t0.x,t0.y,t1.x,t1.y,target,clr);
+	line(t1.x,t1.y,t2.x,t2.y,target,clr);
+	line(t2.x,t2.y,t0.x,t0.y,target,clr);
 }
 
-
 void filledTriangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
-	if(t0.y>t1.y){swap(t0,t1);};
-	if(t0.y>t2.y){swap(t0,t2);};
+	if(t0.y>t1.y){swap(t0,t1);};//sort based on y axis 
+	if(t0.y>t2.y){swap(t0,t2);};//so that t0 is always the smallest
 	if(t1.y>t2.y){swap(t1,t2);};
 	
-	if(t0.y==t2.y){return;}//triangle has no area
+	if(t0.y==t2.y){return;}//return because triangle has no area
 	
-	vec2i middle={t0.x+((t1.y-t0.y)/(t2.y-t0.y))*(t2.x-t0.x),t1.y};
-	float m1=(t1.x-t0.x)/(t1.y-t0.y);
-	float m2=(middle.x-t0.x)/(middle.y-t0.y);
-	
-	int x0=t0.x;
-	int x1=t0.x;	
-	for(int y=t0.y;y<=middle.y;y++){
-		//int x0=t0.x+((y-t0.y)/(t2.y-t0.y))*(t2.x-t0.x); //interpolating from small to end
-		//
-		//int x1=(y<=t1.y)?t0.x+((t1.x-t0.x)/(t1.y-t0.y))*(y-t0.y): //interpolating from small to middle
-		//				    t1.x+((t2.x-t1.x)/(t2.y-t1.y))*(y-t1.y);//interpolating for middle to bottom	
-		line(x0,y,x1,y,target,clr);
-		x0+=m2;
-		x1+=m1;
+	for(int y=t0.y;y<=t2.y;y++){
+		int x0=(int)t0.x+(y-t0.y)*((float)(t2.x-t0.x)/(t2.y-t0.y));//interpolating for the long side
+		
+		int x1=(y<=t1.y)?(int)t0.x+(y-t0.y)*((float)(t1.x-t0.x)/(t1.y-t0.y))://interpolating for the first segment
+						 (int)t1.x+(y-t1.y)*((float)(t2.x-t1.x)/(t2.y-t1.y));//interpolate fro the remaining segment
+		
+		for (int x=x0;x<x1;x++){
+			target.setPixel(x,y,clr);
+		}
+
 	}
 	
 }

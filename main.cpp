@@ -17,22 +17,38 @@ int main(int argc, char** argv){
 		model=new Mesh("african_head.obj");
 	}
 	int width=800;int height=600;
-	TGA output("filled-triangle.tga",width,height);
+	TGA output("Flat-Shaded.tga",width,height);
 	
 	
 	printf("TEST\n");//print something to make sure it works
 	
-	vec2i t0[3] = {{10, 70  }, {50,  160},  {70,   80}}; 
-	vec2i t1[3] = {{180, 50 }, {150,   1},  {70, 180 }}; 
-	vec2i t2[3] = {{180, 150}, {120, 160},  {130, 180}};
+	//******Flat-Shading-Render*****
+	for(int i=0;i<model->nfaces();i++){
+		vector<int> face=model->face(i);
+		vec2i screen_coords[3];
+		for(int j=0;j<3;j++){
+			vec3f world_coords=model->vert(face[j]);
+			screen_coords[j]=vec2i((world_coords.x+1.0)*width/2.0,(world_coords.y+1.0)*height/2.0);
+		}
+		COLOR clr={rand()%255,rand()%255,rand()%255,255};
+		filledTriangle(screen_coords[0],screen_coords[1],screen_coords[2],output,clr);
+	}
 	
-	filledTriangle(t0[0], t0[1], t0[2],output,red);
-	filledTriangle(t1[0], t1[1], t1[2],output,red); 
-	filledTriangle(t2[0], t2[1], t2[2],output,red);
-	
-	triangle(t0[0], t0[1], t0[2],output,blu); 
-	triangle(t1[0], t1[1], t1[2],output,blu); 
-	triangle(t2[0], t2[1], t2[2],output,blu);
+	//******Draw-FilledTriangle*****
+	//vec2i t0[3] = {{100,150 }, {200, 150},  {200, 250}}; 
+	//vec2i t1[3] = {{100,150 }, {200, 150},  {100,  50}}; 
+	//vec2i t2[3] = {{200,  50}, {200, 150},  {100,  50}};
+	//vec2i t3[3] = {{150,  50}, {150, 100},  {200, 100}};
+	//
+	//filledTriangle(t0[0], t0[1], t0[2],output,red);
+	//filledTriangle(t1[0], t1[1], t1[2],output,red);
+	//filledTriangle(t2[0], t2[1], t2[2],output,red);
+	//filledTriangle(t3[0], t3[1], t3[2],output,red);
+	//
+	//triangle(t0[0], t0[1], t0[2],output,blu); 
+	//triangle(t1[0], t1[1], t1[2],output,blu); 
+	//triangle(t2[0], t2[1], t2[2],output,blu);
+	//triangle(t3[0], t3[1], t3[2],output,blu);
 	
 	
 	//********Draw-Wireframe*******
@@ -74,6 +90,7 @@ int main(int argc, char** argv){
 	//}
 	//**************************
 	output.writeFile();
+	printf("done!...\n");//print something to make sure it's done
 	scanf(".");
 	return 0;
 }
