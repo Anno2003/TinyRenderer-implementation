@@ -39,11 +39,16 @@ int main(int argc, char** argv){
 	//vec2i t1[3] = {{100,150 }, {200, 150},  {100,  50}}; 
 	//vec2i t2[3] = {{200,  50}, {200, 150},  {100,  50}};
 	//vec2i t3[3] = {{150,  50}, {150, 100},  {200, 100}};
-	//
+	
+	//vec2i t0[3] ={vec2i(10, 70),   vec2i(50, 160),  vec2i(70, 80)}; 
+	//vec2i t1[3] ={vec2i(180, 50),  vec2i(150, 1),   vec2i(70, 180)}; 
+	//vec2i t2[3] ={vec2i(180, 150), vec2i(120, 160), vec2i(130, 180)};
+	//vec2i t3[3] ={vec2i(180, 150), vec2i(120, 160), vec2i(130, 180)};
+	
 	//filledTriangle(t0[0], t0[1], t0[2],output,red);
-	//filledTriangle(t1[0], t1[1], t1[2],output,red);
+	//filledTriangle(t1[0], t1[1], t1[2],output,black);
 	//filledTriangle(t2[0], t2[1], t2[2],output,red);
-	//filledTriangle(t3[0], t3[1], t3[2],output,red);
+	//filledTriangle(t3[0], t3[1], t3[2],output,black);
 	//
 	//triangle(t0[0], t0[1], t0[2],output,blu); 
 	//triangle(t1[0], t1[1], t1[2],output,blu); 

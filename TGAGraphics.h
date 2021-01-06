@@ -52,25 +52,29 @@ void triangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
 	line(t2.x,t2.y,t0.x,t0.y,target,clr);
 }
 
+
 void filledTriangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
 	if(t0.y>t1.y){swap(t0,t1);};//sort based on y axis 
 	if(t0.y>t2.y){swap(t0,t2);};//so that t0 is always the smallest
 	if(t1.y>t2.y){swap(t1,t2);};
 	
 	if(t0.y==t2.y){return;}//return because triangle has no area
-	
-	for(int y=t0.y;y<=t2.y;y++){
-		int x0=(int)t0.x+(y-t0.y)*((float)(t2.x-t0.x)/(t2.y-t0.y));//interpolating for the long side
+	//somehow it wouldn't work(the swap would be so slow) if you loop until y<=t2.y
+	for(int y=t0.y;y<t2.y;y++){
 		
-		int x1=(y<=t1.y)?(int)t0.x+(y-t0.y)*((float)(t1.x-t0.x)/(t1.y-t0.y))://interpolating for the first segment
-						 (int)t1.x+(y-t1.y)*((float)(t2.x-t1.x)/(t2.y-t1.y));//interpolate fro the remaining segment
+		int x0=t0.x+(y-t0.y)*((float)(t2.x-t0.x)/(t2.y-t0.y));  			//interpolating for the long side
+		int x1=(y<t1.y)?(int)t0.x+(y-t0.y)*((float)(t1.x-t0.x)/(t1.y-t0.y))://interpolating for the first segment
+					    (int)t1.x+(y-t1.y)*((float)(t2.x-t1.x)/(t2.y-t1.y));//interpolate fro the remaining segment
 		
-		for (int x=x0;x<x1;x++){
+		if(x0>x1){swap(x0,x1);}
+		//make sure x0 is smaller than x1 so this loop works
+		for(int x=x0;x<x1;x++){
 			target.setPixel(x,y,clr);
 		}
-
+		
 	}
-	
 }
+
+
 
 #endif
