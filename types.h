@@ -19,10 +19,16 @@ template<class t> struct vec3{
 		struct{t x,y,z;};
 		t raw[3];
 	};
+	vec3() : x(0), y(0), z(0) {}
+	vec3(t _x, t _y,t _z) : x(_x),y(_y),z(_z) {}
+	inline vec3<t> operator ^(const vec3<t> &v) const{return vec3<t>(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x);}
 	inline vec3<t> operator +(const vec3<t> &v) const{return vec3<t>(x+v.x,y+v.y,z+v.z);}
 	inline vec3<t> operator -(const vec3<t> &v) const{return vec3<t>(x-v.x,y-v.y,z-v.z);}
 	inline vec3<t> operator *(float          f) const{return vec3<t>(x*f,y*f,z*f);}
-	inline t       operator *(const vec3<t> &v) const{return vec3<t>(x*v.x,y*v.y,z*v.z);}
+	inline t       operator *(const vec3<t> &v) const{return         x*v.x+y*v.y+z*v.z;}
+	
+	float norm () const {return sqrt(x*x+y*y+z*z);}
+	vec3<t> &normalize(t l=1){*this=(*this)*(1/norm());return *this;}
 };
 
 template<class t> struct vec4{

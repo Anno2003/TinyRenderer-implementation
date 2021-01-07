@@ -16,23 +16,44 @@ int main(int argc, char** argv){
 	else{
 		model=new Mesh("african_head.obj");
 	}
-	int width=800;int height=600;
-	TGA output("Flat-Shaded.tga",width,height);
+	int width=800;int height=800;
+	TGA output("Flat-Shaded2.tga",width,height);
 	
 	
-	printf("TEST\n");//print something to make sure it works
+	printf("RENDERING\n");//print something to make sure it works
 	
 	//******Flat-Shading-Render*****
+	//with some illumination
+	vec3f light_dir(0,0,-1);
 	for(int i=0;i<model->nfaces();i++){
 		vector<int> face=model->face(i);
 		vec2i screen_coords[3];
+		vec3f world_coords[3];
 		for(int j=0;j<3;j++){
-			vec3f world_coords=model->vert(face[j]);
-			screen_coords[j]=vec2i((world_coords.x+1.0)*width/2.0,(world_coords.y+1.0)*height/2.0);
+			vec3f v=model->vert(face[j]);
+			screen_coords[j]=vec2i((v.x+1.0)*width/2.0,(v.y+1.0)*height/2.0);
+			world_coords[j] =v;
 		}
-		COLOR clr={rand()%255,rand()%255,rand()%255,255};
-		filledTriangle(screen_coords[0],screen_coords[1],screen_coords[2],output,clr);
+		vec3f n=(world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
+		n.normalize();
+		float intensity=n*light_dir;
+		if (intensity>0){
+			COLOR clr(intensity*255,intensity*255,intensity*255,255);
+			filledTriangle(screen_coords[0],screen_coords[1],screen_coords[2],output,clr);
+		}
+		
 	}
+	//rainbow colored
+	//for(int i=0;i<model->nfaces();i++){
+	//	vector<int> face=model->face(i);
+	//	vec2i screen_coords[3];
+	//	for(int j=0;j<3;j++){
+	//		vec3f world_coords=model->vert(face[j]);
+	//		screen_coords[j]=vec2i((world_coords.x+1.0)*width/2.0,(world_coords.y+1.0)*height/2.0);
+	//	}
+	//	COLOR clr={rand()%255,rand()%255,rand()%255,255};
+	//	filledTriangle(screen_coords[0],screen_coords[1],screen_coords[2],output,clr);
+	//}
 	
 	//******Draw-FilledTriangle*****
 	//vec2i t0[3] = {{100,150 }, {200, 150},  {200, 250}}; 
