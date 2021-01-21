@@ -42,7 +42,7 @@ void line(int x1,int y1,int x2,int y2,TGA &target,COLOR &clr){
 	}
 }
 
-void triangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
+void triangleLine(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
 	if(t0.y>t1.y){swap(t0,t1);};//sort based on y axis 
 	if(t0.y>t2.y){swap(t0,t2);};//so that t0 is always the smallest
 	if(t1.y>t2.y){swap(t1,t2);};
@@ -51,7 +51,6 @@ void triangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
 	line(t1.x,t1.y,t2.x,t2.y,target,clr);
 	line(t2.x,t2.y,t0.x,t0.y,target,clr);
 }
-
 
 void filledTriangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
 	if(t0.y>t1.y){swap(t0,t1);};//sort based on y axis 
@@ -69,6 +68,7 @@ void filledTriangle(vec2i t0,vec2i t1,vec2i t2,TGA &target,COLOR &clr){
 		if(x0>x1){swap(x0,x1);}
 		//make sure x0 is smaller than x1 so this loop works
 		for(int x=x0;x<x1;x++){
+			printf("[%d,%d]\n",x,y);
 			target.setPixel(x,y,clr);
 		}
 		

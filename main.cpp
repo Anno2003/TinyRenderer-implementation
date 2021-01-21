@@ -6,8 +6,9 @@
 
 using namespace std;
 
-Mesh *model=NULL;
 
+Mesh *model=NULL;
+const int width=800;const int height=800;
 
 int main(int argc, char** argv){
 	if(argc==2){
@@ -16,33 +17,70 @@ int main(int argc, char** argv){
 	else{
 		model=new Mesh("african_head.obj");
 	}
-	int width=800;int height=800;
-	TGA output("Flat-Shaded2.tga",width,height);
+	
+	TGA output("z-buffer.tga",width,height);
 	
 	
 	printf("RENDERING\n");//print something to make sure it works
 	
 	//******Flat-Shading-Render*****
 	//with some illumination
+	float *zbuffer=new float[width*height];
+	
+	for(int i=width*height;i--;zbuffer[i]=-numeric_limits<float>::max());
+	
 	vec3f light_dir(0,0,-1);
-	for(int i=0;i<model->nfaces();i++){
-		vector<int> face=model->face(i);
-		vec2i screen_coords[3];
-		vec3f world_coords[3];
-		for(int j=0;j<3;j++){
-			vec3f v=model->vert(face[j]);
-			screen_coords[j]=vec2i((v.x+1.0)*width/2.0,(v.y+1.0)*height/2.0);
-			world_coords[j] =v;
-		}
-		vec3f n=(world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
-		n.normalize();
-		float intensity=n*light_dir;
-		if (intensity>0){
-			COLOR clr(intensity*255,intensity*255,intensity*255,255);
-			filledTriangle(screen_coords[0],screen_coords[1],screen_coords[2],output,clr);
-		}
-		
-	}
+	
+	output.rasterize(zbuffer,model);
+
+	//for(triangle pts:model->tris){
+	//	COLOR clr(rand()%255,rand()%255,rand()%255,255);
+	//	//change to screen coords
+	//	pts[0]=vec3f(int( (pts[0].x+1.0)*width/2.0+5.0) ,int( (pts[0].y+1.0)*height/2.0+5.0) , pts[0].z);
+	//	pts[1]=vec3f(int( (pts[1].x+1.0)*width/2.0+5.0) ,int( (pts[1].y+1.0)*height/2.0+5.0) , pts[1].z);
+	//	pts[2]=vec3f(int( (pts[2].x+1.0)*width/2.0+5.0) ,int( (pts[2].y+1.0)*height/2.0+5.0) , pts[2].z);
+	//	///////////////////////////
+	//	vec3f t0=pts[0];
+	//	vec3f t1=pts[1];
+	//	vec3f t2=pts[2];
+	//	
+	//	if(t0.y>t1.y){swap(t0,t1);};
+	//	if(t0.y>t2.y){swap(t0,t2);};
+	//	if(t1.y>t2.y){swap(t1,t2);};
+	//	
+	//	
+	//	for(int y=t0.y;y<t2.y;y++){
+	//		int x0=t0.x+(y-t0.y)*((float)(t2.x-t0.x)/(t2.y-t0.y));  			//interpolating for the long side
+	//		int x1=(y<t1.y)?(int)t0.x+(y-t0.y)*((float)(t1.x-t0.x)/(t1.y-t0.y))://interpolating for the first segment
+	//						(int)t1.x+(y-t1.y)*((float)(t2.x-t1.x)/(t2.y-t1.y));//interpolate fro the remaining segment
+	//		if(x0>x1){swap(x0,x1);}
+	//		for(int x=x0;x<x1;x++){
+	//			vec3f bc_screen = pts.Barycentric(vec2f(x,y));
+	//			
+	//			output.setPixel(x,y,clr);
+	//
+	//		}
+	//	}
+	//}
+	
+	//for(int i=0;i<model->nfaces();i++){
+	//	vector<int> face=model->face(i);
+	//	vec2i screen_coords[3];
+	//	vec3f world_coords[3];
+	//	for(int j=0;j<3;j++){
+	//		vec3f v=model->vert(face[j]);//get coords from index
+	//		screen_coords[j]=vec2i((v.x+1.0)*width/2.0,(v.y+1.0)*height/2.0);
+	//		world_coords[j] =v;
+	//	}
+	//	vec3f normal=(world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
+	//	normal.normalize();
+	//	float intensity=normal*light_dir;
+	//	if (intensity>0){
+	//		COLOR clr(intensity*255,intensity*255,intensity*255,255);
+	//		filledTriangle(screen_coords[0],screen_coords[1],screen_coords[2],output,clr);
+	//	}
+	//	
+	//}
 	//rainbow colored
 	//for(int i=0;i<model->nfaces();i++){
 	//	vector<int> face=model->face(i);
@@ -78,17 +116,19 @@ int main(int argc, char** argv){
 	
 	
 	//********Draw-Wireframe*******
+	//int *zbuffer=new int[width*height];
 	//for(int i=0;i<model->nfaces();i++){
 	//	vector<int> face=model->face(i);
 	//	for(int j=0;j<3;j++){
 	//		vec3f v0 = model->vert(face[j]);
 	//		vec3f v1 = model->vert(face[(j+1)%3]);
+	//		
 	//		int x0 = (v0.x+1.0)*width/2.0; 
 	//		int y0 = (v0.y+1.0)*height/2.0; 
 	//		int x1 = (v1.x+1.0)*width/2.0; 
 	//		int y1 = (v1.y+1.0)*height/2.0;
 	//
-	//		line(x0,y0,x1,y1,output,red);
+	//		line(x0, y0, x1, y1, output, red);
 	//	}	
 	//}
 	

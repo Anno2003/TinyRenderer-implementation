@@ -12,13 +12,14 @@ class Mesh{
 	private:
 	vector<vec3f>       verts;//vertices coordinates
 	vector<vector<int>>  fidx;//index of vertices 
-	vector<triangle>     tris;//triangle faces
+	
 	vector<vec3f>    textures;//texture coordinates
 	vector<vector<int>>  tidx;//index of  texture 
 	vector<vec3f>     normals;//normals coordinates
 	vector<vector<int>>  nidx;//index of  normals
 	
 	public:
+	vector<triangle>     tris;//triangle faces
 	Mesh(string Fname){
 		ifstream f(Fname);	
 		string line;
@@ -49,6 +50,7 @@ class Mesh{
 	
 	vec3f vert(int i){return verts[i];}
 	vector<int> face(int i){return fidx[i];}
+
 };
 
 
