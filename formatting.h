@@ -61,9 +61,12 @@ class TGA{
 		
 		void loadFile();
 		
-		void rasterize(float *zbuffer,Mesh* model){		
+		void rasterize(float *zbuffer,Mesh *model,vec3f light){		
 			for(triangle pts:model->tris){
-				COLOR clr(rand()%255,rand()%255,rand()%255,255);
+				vec3f normal=(pts[2]-pts[0])^(pts[1]-pts[0]);
+				normal.normalize();
+				float intensity=normal*light;
+				COLOR clr(intensity*255,intensity*255,intensity*255,255);
 				//change to screen coords
 				pts[0]=vec3f(int( (pts[0].x+1.0)*width/2.0) ,int( (pts[0].y+1.0)*height/2.0) , pts[0].z);
 				pts[1]=vec3f(int( (pts[1].x+1.0)*width/2.0) ,int( (pts[1].y+1.0)*height/2.0) , pts[1].z);
@@ -88,8 +91,8 @@ class TGA{
 						vec3f bc_screen = pts.Barycentric(vec2f(x,y));
 						float z=0;
 						for(int i=0;i<3;i++){z+=pts[i][2]*bc_screen[i];}
-						int idx=x+y*height;//printf("[%d,%d]%d\n",x,y,idx);//apparently the index is out of bounds of array
-						if(zbuffer[idx]<z){//TODO accessing zbuffer crashes program
+						int idx=x+y*height;
+						if(zbuffer[idx]<z){
 							zbuffer[idx]=z;
 							this->setPixel(x,y,clr);
 						}

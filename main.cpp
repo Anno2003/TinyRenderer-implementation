@@ -31,7 +31,7 @@ int main(int argc, char** argv){
 	
 	vec3f light_dir(0,0,-1);
 	
-	output.rasterize(zbuffer,model);
+	output.rasterize(zbuffer,model,light_dir);
 
 	//for(triangle pts:model->tris){
 	//	COLOR clr(rand()%255,rand()%255,rand()%255,255);
