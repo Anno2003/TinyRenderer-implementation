@@ -2,29 +2,55 @@
 #define FORMATTING_H
 
 #include <fstream>
-#include <string>
+#include <string.h>
 #include "types.h"
 #include "mesh.h"
 using namespace std;
 
+#pragma pack(push,1)
+	struct Header{
+		char  id;
+		char  mapType;
+		char  dataTypeCode;
+		short maporigin;
+		short mapLength;
+		char  mapDepth;
+		short x_origin;
+		short y_origin;
+		short width;
+		short height;
+		char  bitsPerPixel;
+		char  imgDescriptor;
+	};
+#pragma pack(pop)
 
 class TGA{
 	private:
 	const char *filename;
 	int width,height;
-	unsigned char header[18]={0};
+	//unsigned char header[18]={0};
+	Header header;
 	COLOR *data;
 	public:
 		TGA(const char *fname,unsigned w,unsigned h):width(w),height(h){
 			filename=fname;
-			
+			memset((void *)&header,0,sizeof(header));
+
+			header.dataTypeCode=2;
+			header.width       =w;
+			header.height      =h;
+			header.bitsPerPixel=32;
+
+			/*
 			header[2 ]=2;               //image type
 			header[12]=w  & 0x00FF;     //width low order byte
 			header[13]=(w & 0xFF00)/256;//width high order byte
 			header[14]=h  & 0x00FF;     //height low order byte
 			header[15]=(h & 0xFF00)/256;//height high order byte
 			header[16]=32;              //bits per pixel
-			
+			*/
+
+
 			data=new COLOR[w*h];
 			for(int i=0;i<width*height;i++){
 				data[i].red=0;
@@ -40,7 +66,8 @@ class TGA{
 		
 		void writeFile(){
 			ofstream f(filename,ios::binary);
-			f.write((const char*)&header,18);
+			//f.write((const char*)&header,18);
+			f.write((char*)&header,sizeof(header));
 			for(int i=0;i<width*height;i++){
 				f.put(data[i].blue);
 				f.put(data[i].green);
@@ -59,7 +86,21 @@ class TGA{
 			}
 		}
 		
-		void loadFile();
+		void loadFile(const char *fname){
+			if(data) delete[] data;
+			data=NULL;
+			ifstream in(fname,ios::binary);
+			in.read((char *)&header,sizeof(header));
+			width =header.width;
+			height=header.height;
+
+			data=new COLOR[width*height];
+			in.seekg(0,in.end);
+			int length=in.tellg();
+			in.seekg(sizeof(header));
+			in.read((char *)&data,length-sizeof(header));
+			
+		};
 		
 		void rasterize(float *zbuffer,Mesh *model,vec3f light){		
 			for(triangle pts:model->tris){

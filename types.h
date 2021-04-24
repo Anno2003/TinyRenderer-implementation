@@ -1,6 +1,7 @@
 #ifndef TYPE_H
 #define TYPE_H
-
+//sorry  this place is messy, i think i kinda overengineered it a bit
+//i'll clean it up in the future
 #include <cassert>
 
 template<class t> struct vec2;
