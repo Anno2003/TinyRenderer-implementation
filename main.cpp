@@ -10,6 +10,47 @@ using namespace std;
 Mesh *model=NULL;
 const int width=800;const int height=800;
 
+
+void rasterize(TGA& tga,float *zbuffer,Mesh *model,vec3f light){		
+	for(triangle pts:model->tris){
+		vec3f normal=(pts[2]-pts[0])^(pts[1]-pts[0]);
+		normal.normalize();
+		float intensity=normal*light;
+		COLOR clr(intensity*255,intensity*255,intensity*255,255);
+		//change to screen coords
+		pts[0]=vec3f(int( (pts[0].x+1.0)*width/2.0) ,int( (pts[0].y+1.0)*height/2.0) , pts[0].z);
+		pts[1]=vec3f(int( (pts[1].x+1.0)*width/2.0) ,int( (pts[1].y+1.0)*height/2.0) , pts[1].z);
+		pts[2]=vec3f(int( (pts[2].x+1.0)*width/2.0) ,int( (pts[2].y+1.0)*height/2.0) , pts[2].z);
+		///////////////////////////
+		vec3f t0=pts[0];
+		vec3f t1=pts[1];
+		vec3f t2=pts[2];
+		
+		if(t0.y>t1.y){swap(t0,t1);};
+		if(t0.y>t2.y){swap(t0,t2);};
+		if(t1.y>t2.y){swap(t1,t2);};
+
+		
+		for(int y=t0.y;y<t2.y;y++){
+			int x0=t0.x+(y-t0.y)*((float)(t2.x-t0.x)/(t2.y-t0.y));  			//interpolating for the long side
+			int x1=(y<t1.y)?(int)t0.x+(y-t0.y)*((float)(t1.x-t0.x)/(t1.y-t0.y))://interpolating for the first segment
+							(int)t1.x+(y-t1.y)*((float)(t2.x-t1.x)/(t2.y-t1.y));//interpolate fro the remaining segment
+			if(x0>x1){swap(x0,x1);}
+			for(int x=x0;x<=x1;x++){
+				
+				vec3f bc_screen = pts.Barycentric(vec2f(x,y));
+				float z=0;
+				for(int i=0;i<3;i++){z+=pts[i][2]*bc_screen[i];}
+				int idx=x+y*height;
+				if(zbuffer[idx]<z){
+					zbuffer[idx]=z;
+					tga.setPixel(x,y,clr);
+				}
+			}
+		}
+	}
+}
+
 int main(int argc, char** argv){
 	if(argc==2){
 		model=new Mesh(argv[1]);
@@ -31,8 +72,8 @@ int main(int argc, char** argv){
 	
 	vec3f light_dir(0,0,-1);
 	
-	output.rasterize(zbuffer,model,light_dir);
-
+	rasterize(output,zbuffer,model,light_dir);
+	//TODO:move this whole commented tests into a header file and use preprocessor to access tests
 	//for(triangle pts:model->tris){
 	//	COLOR clr(rand()%255,rand()%255,rand()%255,255);
 	//	//change to screen coords
